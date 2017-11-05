@@ -4,8 +4,18 @@ const moment = require('moment');
 const schema = db.Schema({
     username: String,
     password: String,
-    name: String,
-    gender: String,
+    name: {
+        farsi: String,
+        latin: String
+    },
+    lastname: {
+        farsi: String,
+        latin: String
+    },
+    gender: {
+        type: String,
+        enum: [ 'M', 'F', 'O' ],
+    },
     birthday: String,
     avatar: String,
     phone: String,
@@ -24,6 +34,23 @@ schema.methods.payFor = function (howManyMonths) {
     this.membership.expire = moment().add(months, 'months').valueOf();
 };
 
+schema.methods.getJSON = function () {
+    return {
+        username: this.username,
+        name: this.name,
+        lastname: this.lastname,
+        age: this.age,
+        gender: this.gender,
+        phone: this.phone,
+        email: this.email,
+        membership: this.membership
+    }
+};
+
+schema.statics.findOneByUsername = function (username, cb) {
+    return this.findOne({ username: new RegExp(username, 'i') }, cb);
+};
+
 schema.virtual('daysToExpire').get(function () {
     return moment().diff(this.membership.expire, 'days');
 });
@@ -33,6 +60,12 @@ schema.virtual('isActive').get(function () {
 schema.virtual('age').get(function () {
     const birthday = moment(this.birthday, 'YYYY-MM-DD');
     return moment().diff(birthday, 'years');
+});
+schema.virtual('farsiFullName').get(function () {
+    return this.name.farsi + ' ' + this.lastname.farsi;
+});
+schema.virtual('latinFullName').get(function () {
+    return this.name.latin + ' ' + this.lastname.latin;
 });
 
 module.exports = db.model('Member', schema);
