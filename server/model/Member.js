@@ -1,5 +1,5 @@
-const db = require('./db');
-const moment = require('moment');
+const db = require('./db')
+const moment = require('moment')
 
 const schema = db.Schema({
     username: String,
@@ -24,15 +24,15 @@ const schema = db.Schema({
         start: { type: Date, default: Date.now },
         expire: { type: Date, default: Date.now }
     }
-});
+})
 
 schema.methods.introduce = function () {
     console.log(`Hey! This is ${this.name}`)
-};
+}
 schema.methods.payFor = function (howManyMonths) {
-    const months = howManyMonths || 1;
-    this.membership.expire = moment().add(months, 'months').valueOf();
-};
+    const months = howManyMonths || 1
+    this.membership.expire = moment().add(months, 'months').valueOf()
+}
 
 schema.methods.getJSON = function () {
     return {
@@ -45,27 +45,27 @@ schema.methods.getJSON = function () {
         email: this.email,
         membership: this.membership
     }
-};
+}
 
 schema.statics.findOneByUsername = function (username, cb) {
-    return this.findOne({ username: new RegExp(username, 'i') }, cb);
-};
+    return this.findOne({ username: new RegExp(username, 'i') }, cb)
+}
 
 schema.virtual('daysToExpire').get(function () {
-    return moment().diff(this.membership.expire, 'days');
-});
+    return moment().diff(this.membership.expire, 'days')
+})
 schema.virtual('isActive').get(function () {
     return moment().diff(this.membership.expire) > 0
-});
+})
 schema.virtual('age').get(function () {
-    const birthday = moment(this.birthday, 'YYYY-MM-DD');
-    return moment().diff(birthday, 'years');
-});
+    const birthday = moment(this.birthday, 'YYYY-MM-DD')
+    return moment().diff(birthday, 'years')
+})
 schema.virtual('farsiFullName').get(function () {
-    return this.name.farsi + ' ' + this.lastname.farsi;
-});
+    return this.name.farsi + ' ' + this.lastname.farsi
+})
 schema.virtual('latinFullName').get(function () {
-    return this.name.latin + ' ' + this.lastname.latin;
-});
+    return this.name.latin + ' ' + this.lastname.latin
+})
 
 module.exports = db.model('Member', schema);
