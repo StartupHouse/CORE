@@ -1,25 +1,68 @@
 const db = require('./db');
 const moment = require('moment');
+const validator = require('validator');
 
 const schema = db.Schema({
-    username: String,
-    password: String,
+    username: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
     name: {
-        farsi: String,
-        latin: String
+        farsi: {
+            type: String,
+            required: true
+        },
+        latin: {
+            type: String,
+            required: true
+        }
     },
     lastname: {
-        farsi: String,
-        latin: String
+        farsi: {
+            type: String,
+            required: true
+        },
+        latin: {
+            type: String,
+            required: true
+        }
     },
     gender: {
         type: String,
         enum: [ 'M', 'F', 'O' ],
+        required: true
     },
-    birthday: String,
-    avatar: String,
-    phone: String,
-    email: String,
+    birthday: {
+        type: String,
+        enum: [ 'M', 'F', 'O' ],
+        required: true
+    },
+    phone: {
+        type: String,
+        enum: [ 'M', 'F', 'O' ],
+        required: true,
+        validate: {
+            isAsync: true,
+            validator: (phoneNumber, cb) => {
+                const phoneRegex = /09\d{9}/;
+                const msg = phoneNumber + ' is not a valid phone number!';
+                cb(phoneRegex.test(phoneNumber), msg);
+            }
+        },
+    },
+    email: {
+        type: String,
+        required: true,
+        validate: {
+            isAsync: true,
+            validator: validator.isEmail
+        }
+    },
     membership: {
         start: { type: Date, default: Date.now },
         expire: { type: Date, default: Date.now }
