@@ -22,7 +22,7 @@ const schema = db.Schema({
     email: String,
     membership: {
         start: { type: Date, default: Date.now },
-        expire: Date
+        expire: { type: Date, default: Date.now }
     }
 });
 
