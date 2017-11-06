@@ -43,7 +43,9 @@ const schema = db.Schema({
         required: true,
         validator: {
             isAsync: true,
-            validator: (birth, cb) => cb(/^\d{2}-\d{2}-\d{2}$/.test(birth), `${birth} is not a valid birthday!`)
+            validator: (birth, cb) => setTimeout(() => {
+                cb(/^\d{2}-\d{2}-\d{2}$/.test(birth), `${birth} is not a valid birthday!`)
+            }, 5)
         }
     },
     phone: {
@@ -51,7 +53,7 @@ const schema = db.Schema({
         required: true,
         validate: {
             isAsync: true,
-            validator: (phone, cb) => cb(/09\d{9}/.test(phone), `${phone} is not a valid phone number!`)
+            validator: (phone, cb) => validator.isMobilePhone(phone, 'fa-IR')
         },
     },
     email: {
