@@ -6,14 +6,14 @@ const Member = require('../server/model/Member')
 
 /* GET members list. */
 router.get('/', (req, res) => {
-    Member.find({}, function (err, members) {
+    Member.find(req.query, function (err, members) {
         const list = []
         for (let member of members) list.push(member.getJSON())
         res.json(list)
     })
 })
 
-/* ADD new member */
+/* ADD new member. */
 router.post('/', (req, res) => {
     const newMember = new Member(req.body)
     newMember.save((err) => {
@@ -25,9 +25,9 @@ router.post('/', (req, res) => {
     })
 })
 
-/* DELETE all members */
+/* DELETE all members. */
 router.delete('/', (req, res) => {
-    Member.remove({}, () => res.status(200).json({ message: 'OK' }))
+    Member.remove(req.query, () => res.status(200).json({ message: 'OK' }))
 })
 
 /* GET member by Username. */
@@ -47,6 +47,14 @@ router.put('/:username', (req, res) => {
             if (err) return res.status(400).json({ message: 'could not update the member' })
             res.json(member.getJSON())
         })
+    })
+})
+
+/* Update member by Username. */
+router.delete('/:username', (req, res) => {
+    Member.delete({ username: req.params.username }, (err) => {
+        if (err) return res.status(400).json({ message: 'Could not delete member' })
+        res.json({ message: 'OK' })
     })
 })
 
