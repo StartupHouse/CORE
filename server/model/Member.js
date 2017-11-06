@@ -1,6 +1,7 @@
 const db = require('./db')
 const moment = require('moment')
 const validator = require('validator')
+const md5 = require('md5')
 
 const schema = db.Schema({
     username: {
@@ -103,6 +104,10 @@ schema.virtual('isActive').get(function () {
 schema.virtual('age').get(function () {
     const birthday = moment(this.birthday, 'YYYY-MM-DD');
     return moment().diff(birthday, 'years');
+})
+schema.virtual('avatar').get(function () {
+    const hash = md5(this.email.trim())
+    return `https://www.gravatar.com/avatar/${hash}`
 })
 schema.virtual('farsiFullName').get(function () {
     return this.name.farsi + ' ' + this.lastname.farsi;
