@@ -7,7 +7,7 @@ const schema = db.Schema({
     username: {
         type: String,
         required: true,
-        unique: true
+        unique: [true, `username must be unique`]
     },
     password: {
         type: String,
@@ -40,25 +40,24 @@ const schema = db.Schema({
     },
     birthday: {
         type: String,
-        enum: [ 'M', 'F', 'O' ],
-        required: true
+        required: true,
+        validator: {
+            isAsync: true,
+            validator: (birth, cb) => cb(/^\d{2}-\d{2}-\d{2}$/.test(birth), `${birth} is not a valid birthday!`)
+        }
     },
     phone: {
         type: String,
-        enum: [ 'M', 'F', 'O' ],
         required: true,
         validate: {
             isAsync: true,
-            validator: (phoneNumber, cb) => {
-                const phoneRegex = /09\d{9}/;
-                const msg = phoneNumber + ' is not a valid phone number!';
-                cb(phoneRegex.test(phoneNumber), msg);
-            }
+            validator: (phone, cb) => cb(/09\d{9}/.test(phone), `${phone} is not a valid phone number!`)
         },
     },
     email: {
         type: String,
         required: true,
+        unique: [true, `email must be unique`],
         validate: {
             isAsync: true,
             validator: validator.isEmail
