@@ -25,9 +25,29 @@ router.post('/', (req, res) => {
     })
 })
 
+/* DELETE all members */
+router.delete('/', (req, res) => {
+    Member.remove({}, () => res.status(200).json({ message: 'OK' }))
+})
+
 /* GET member by Username. */
 router.get('/:username', (req, res) => {
-    Member.findOneByUsername(req.params.username, (err, member) => res.json(member.getJSON()))
+    Member.findOneByUsername(req.params.username, (err, member) => {
+        if (!member) return res.status(400).json({ message: 'user not found' });
+        res.json(member.getJSON())
+    })
+})
+
+/* Update member by Username. */
+router.put('/:username', (req, res) => {
+    Member.findOneByUsername(req.params.username, (err, member) => {
+        if (!member) return res.status(400).json({ message: 'user not found' })
+        member.set(req.body);
+        member.save((err) => {
+            if (err) return res.status(400).json({ message: 'could not update the member' })
+            res.json(member.getJSON())
+        })
+    })
 })
 
 module.exports = router
