@@ -39,14 +39,8 @@ const schema = db.Schema({
         required: true
     },
     birthday: {
-        type: String,
-        required: true,
-        validator: {
-            isAsync: true,
-            validator: (birth, cb) => setTimeout(() => {
-                cb(/^\d{2}-\d{2}-\d{2}$/.test(birth), `${birth} is not a valid birthday!`)
-            }, 5)
-        }
+        type: Date,
+        required: true
     },
     phone: {
         type: String,
