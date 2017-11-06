@@ -77,7 +77,6 @@ schema.methods.payFor = function (howManyMonths) {
     const months = howManyMonths || 1;
     this.membership.expire = moment().add(months, 'months').valueOf();
 }
-
 schema.methods.getJSON = function () {
     return {
         username: this.username,
